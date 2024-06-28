@@ -53,7 +53,12 @@ app.post('/get-farms', [
         body('creator')
             .optional()
             .matches(/^[a-z1-5.]+$/).withMessage('Invalid creator format: only a-z, 1-5, and . are allowed')
-            .isLength({ min: 1, max: 12 }).withMessage('Creator length must be between 1 and 12 characters')        
+            .isLength({ min: 1, max: 12 }).withMessage('Creator length must be between 1 and 12 characters')  
+
+        body('original_creator')
+            .optional()
+            .matches(/^[a-z1-5.]+$/).withMessage('Invalid original creator format: only a-z, 1-5, and . are allowed')
+            .isLength({ min: 1, max: 12 }).withMessage('Original creator length must be between 1 and 12 characters')                   
 
     ], async (req, res) => {
 
@@ -63,6 +68,7 @@ app.post('/get-farms', [
     }
 
     const creator = req.body.creator || "";
+    const creator = req.body.original_creator || "";
     const page = req.body.page || 1;
     const limit = req.body.limit || 100;
     const sort = SORT_METHODS[req.body.sort] || SORT_METHODS["newest"];
@@ -86,6 +92,9 @@ app.post('/get-farms', [
             if(creator != ""){
                 queryString += ` WHERE creator = $${++paramCounter}`;
                 params.push(creator);
+            } else if(original_creator != ""){
+                queryString += ` WHERE original_creator = $${++paramCounter}`;
+                params.push(original_creator);                
             }
 
             query_string += `${sort} LIMIT ${limit} OFFSET ${(limit * page) - limit}`;
