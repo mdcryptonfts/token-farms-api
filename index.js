@@ -36,6 +36,57 @@ const SORT_METHODS = {
     oldest: " ORDER BY time_created ASC",
 };
 
+app.post('/get-farm', [
+
+        body('farm_name')
+            .notEmpty()
+            .matches(/^[a-z1-5.]+$/).withMessage('Invalid farm_name format: only a-z, 1-5, and . are allowed')
+            .isLength({ min: 1, max: 12 }).withMessage('farm_name length must be between 1 and 12 characters')                   
+
+    ], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const farm_name = req.body.farm_name;
+
+    let postgresClient = null;
+
+    try {
+
+        postgresClient = await postgresPool.connect();
+
+        try {
+
+            let queryString = `
+              SELECT *
+              FROM tokenfarms_farms
+              WHERE farm_name = $1
+              LIMIT 1
+            `;
+
+            const selectResult = await postgresClient.query(queryString, [farm_name]);
+            res.send({farm: selectResult.rows});     
+
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Server error'); 
+        }
+
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Server error'); 
+    } finally {
+        if(postgresClient){
+            postgresClient.release();
+        }            
+    }
+
+});
+
 
 app.post('/get-farms', [
 
