@@ -55,7 +55,7 @@ app.post('/get-farms', [
             .matches(/^[a-z1-5.]+$/).withMessage('Invalid creator format: only a-z, 1-5, and . are allowed')
             .isLength({ min: 1, max: 12 }).withMessage('Creator length must be between 1 and 12 characters')        
 
-    ] async (req, res) => {
+    ], async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
