@@ -97,7 +97,7 @@ app.post('/get-farms', [
                 params.push(original_creator);                
             }
 
-            query_string += `${sort} LIMIT ${limit} OFFSET ${(limit * page) - limit}`;
+            queryString += `${sort} LIMIT ${limit} OFFSET ${(limit * page) - limit}`;
 
             const selectResult = await postgresClient.query(queryString, params);
             res.send({farms: selectResult.rows});     
