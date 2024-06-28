@@ -164,7 +164,7 @@ app.post('/staked-only', [
                 SELECT 
                     farms.*, 
                     stakers.balance AS staker_balance, 
-                    stakers.last_update_time AS staker_last_update_time,
+                    stakers.last_update_time AS staker_last_update_time
                 FROM tokenfarms_stakers stakers
                 JOIN tokenfarms_farms farms ON stakers.farm_name = farms.farm_name
                 WHERE stakers.username = $${++paramCounter}
