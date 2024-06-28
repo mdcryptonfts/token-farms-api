@@ -68,7 +68,7 @@ app.post('/get-farms', [
     }
 
     const creator = req.body.creator || "";
-    const creator = req.body.original_creator || "";
+    const original_creator = req.body.original_creator || "";
     const page = req.body.page || 1;
     const limit = req.body.limit || 100;
     const sort = SORT_METHODS[req.body.sort] || SORT_METHODS["newest"];
