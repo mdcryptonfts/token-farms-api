@@ -53,7 +53,7 @@ app.post('/get-farms', [
         body('creator')
             .optional()
             .matches(/^[a-z1-5.]+$/).withMessage('Invalid creator format: only a-z, 1-5, and . are allowed')
-            .isLength({ min: 1, max: 12 }).withMessage('Creator length must be between 1 and 12 characters')  
+            .isLength({ min: 1, max: 12 }).withMessage('Creator length must be between 1 and 12 characters'),
 
         body('original_creator')
             .optional()
