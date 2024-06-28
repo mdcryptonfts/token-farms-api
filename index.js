@@ -103,11 +103,13 @@ app.post('/get-farms', [
             res.send({farms: selectResult.rows});     
 
         } catch (e) {
+            console.log(e);
             res.status(500).send('Server error'); 
         }
 
 
     } catch (e) {
+        console.log(e);
         res.status(500).send('Server error'); 
     } finally {
         if(postgresClient){
@@ -177,11 +179,13 @@ app.post('/staked-only', [
             res.send({farms: selectResult.rows});     
 
         } catch (e) {
+            console.log(e);
             res.status(500).send('Server error'); 
         }
 
 
     } catch (e) {
+        console.log(e);
         res.status(500).send('Server error'); 
     } finally {
         if(postgresClient){
