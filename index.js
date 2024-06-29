@@ -170,6 +170,75 @@ app.post('/get-farms', [
 
 });
 
+app.post('/get-stakers', [
+
+        body('page').optional().isInt({
+            min: 1
+        }).withMessage('Page must be a positive integer'),
+
+        body('limit').optional().isInt({
+            min: 1,
+            max: 100
+        }).withMessage('Limit must be a positive integer and max 100'),
+
+        body('farm_name')
+            .notEmpty()
+            .matches(/^[a-z1-5.]+$/).withMessage('Invalid farm_name format: only a-z, 1-5, and . are allowed')
+            .isLength({ min: 1, max: 12 }).withMessage('farm_name length must be between 1 and 12 characters')
+
+    ], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const farm_name = req.body.farm_name;
+    const page = req.body.page || 1;
+    const limit = req.body.limit || 100;
+
+    let postgresClient = null;
+
+    try {
+
+        postgresClient = await postgresPool.connect();
+
+        try {
+
+            let paramCounter = 0;
+            let params = [];
+
+            let queryString = `
+                SELECT *
+                FROM tokenfarms_stakers
+                WHERE farm_name = $${++paramCounter}
+                ORDER BY balance_numeric DESC
+                LIMIT $${++paramCounter} 
+                OFFSET $${++paramCounter}
+            `;
+
+            params.push(farm_name, limit, (limit * page) - limit);
+
+            const selectResult = await postgresClient.query(queryString, params);
+            res.send({stakers: selectResult.rows});     
+
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Server error'); 
+        }
+
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Server error'); 
+    } finally {
+        if(postgresClient){
+            postgresClient.release();
+        }            
+    }
+
+});
+
 app.post('/staked-only', [
 
         body('page').optional().isInt({
